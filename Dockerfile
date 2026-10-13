@@ -19,8 +19,10 @@ COPY requirements.txt ./
 RUN python3 -m venv /opt/venv && /opt/venv/bin/pip install -r requirements.txt
 ENV PATH="/opt/venv/bin:$PATH"
 
+# npm ci는 잠금 파일을 만든 npm 버전·운영체제가 다르면(윈도우 npm 11 ↔ 이 이미지의 npm 10) 거절한다.
+# 잠금 파일을 기준으로 삼되 부족한 것은 채워 넣는 install을 쓴다.
 COPY web/package.json web/package-lock.json ./web/
-RUN cd web && npm ci
+RUN cd web && npm install --no-audit --no-fund
 
 COPY bidmap ./bidmap
 COPY seed ./seed
