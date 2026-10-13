@@ -22,8 +22,9 @@ if [ -s "$DATA/bidmap.sqlite" ]; then
     || echo "화면 데이터 만들기 실패 — 빌드 때의 데이터로 시작합니다"
 fi
 
-# 수집·화면 데이터 갱신. 죽어도 화면은 살아 있고, 1분 뒤 다시 뜬다.
-( while true; do python -m bidmap schedule || echo "스케줄러가 멈춰 다시 시작합니다"; sleep 60; done ) &
+# 수집·화면 데이터 갱신. 죽어도 화면은 살아 있다. 다시 띄우기 전에 15분 쉰다 —
+# 바로 다시 띄우면, 같은 이유로 계속 죽는 경우 API를 분당 몇 번씩 헛되이 부르게 된다(실제로 그랬다).
+( while true; do python -m bidmap schedule || echo "스케줄러가 멈췄습니다. 15분 뒤 다시 시작합니다"; sleep 900; done ) &
 
 # 빌드 때 구워 둔 페이지가 빌드 시점의 데이터를 담고 있다. 서버가 뜨면 한 번씩 불러 새 데이터로 다시 굽게 한다.
 ( sleep 10

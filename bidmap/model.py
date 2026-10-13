@@ -24,13 +24,18 @@ GRID = np.round(np.arange(97.0, 103.0001, 0.001), 3)      # 후보 사정률(0.0
 class DrawCdf:
     """추첨 모형의 누적분포. 폭(±3%, ±2%)별로 한 번 만들어 둔다."""
 
-    def __init__(self, n: int = 2_000_000, seed: int = 11):
+    def __init__(self, n: int = 2_000_000, seed: int = 11, chunk: int = 100_000):
         self._sorted: dict[float, np.ndarray] = {}
-        self._n, self._seed = n, seed
+        self._n, self._seed, self._chunk = n, seed, chunk
 
     def __call__(self, width: float, x: np.ndarray) -> np.ndarray:
         if width not in self._sorted:
-            self._sorted[width] = np.sort(draw.sample_rate(self._n, width, np.random.default_rng(self._seed)))
+            # 한 번에 n줄을 뽑으면 n×15칸짜리 표 세 개(약 700MB)가 생긴다. 서버(메모리 1GB)에서 이 때문에
+            # 프로세스가 죽었다 — 나눠 뽑고 결과(줄당 숫자 하나)만 모은다.
+            rng = np.random.default_rng(self._seed)
+            parts = [draw.sample_rate(min(self._chunk, self._n - i), width, rng).astype(np.float32)
+                     for i in range(0, self._n, self._chunk)]
+            self._sorted[width] = np.sort(np.concatenate(parts))
         s = self._sorted[width]
         return np.searchsorted(s, x, side="right") / len(s)
 
