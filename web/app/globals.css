@@ -1,0 +1,174 @@
+@import "tailwindcss";
+@import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+
+/* 색은 역할 이름으로만 쓴다. 정보의 종류마다 색을 하나씩 준다:
+   주황 = 추천 자리, 파랑 = 확률·기준선, 보라 = 경쟁사, 초록 = 좋은 결과, 호박 = 주의 */
+:root {
+  color-scheme: light;
+  --ink: #0c1222;
+  --ink-2: #454b5c;
+  --muted: #71788b;
+  --line: #e3e6ee;
+  --paper: #ffffff;
+  --mist: #f2f5fb;
+  --sand: #faf5ea;
+  --navy: #0b1638;
+  --navy-2: #16245a;
+  --navy-line: #2b3a75;
+  --navy-ink: #c9d3f2;
+
+  --blue: #2a78d6;
+  --blue-bright: #7ab8ff;
+  --blue-soft: #e5f0fd;
+  --orange: #eb6834;
+  --orange-bright: #ff9159;
+  --orange-soft: #fdeadf;
+  --orange-ink: #bf4716;      /* 주황을 글자로 쓸 때(대비 확보) */
+  --violet: #6250d6;
+  --violet-soft: #ece9fb;
+  --green: #0b8a5f;
+  --green-soft: #e0f5ec;
+  --amber: #b97700;
+  --amber-soft: #fbf0d6;
+  --rose: #c93a3a;
+  --rose-soft: #fbe6e6;
+
+  /* 차트 */
+  --brand: var(--blue);
+  --brand-wash: #2a78d61f;
+  --mark: var(--orange);
+  --rival: #8f95a6;
+  --axis: #c5cad8;
+  --grid: #e9ecf3;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-paper: var(--paper);
+  --color-mist: var(--mist);
+  --color-sand: var(--sand);
+  --color-navy: var(--navy);
+  --color-navy-2: var(--navy-2);
+  --color-navy-line: var(--navy-line);
+  --color-navy-ink: var(--navy-ink);
+  --color-blue: var(--blue);
+  --color-blue-bright: var(--blue-bright);
+  --color-blue-soft: var(--blue-soft);
+  --color-orange: var(--orange);
+  --color-orange-bright: var(--orange-bright);
+  --color-orange-soft: var(--orange-soft);
+  --color-orange-ink: var(--orange-ink);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-green: var(--green);
+  --color-green-soft: var(--green-soft);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-rose: var(--rose);
+  --color-rose-soft: var(--rose-soft);
+  --color-rival: var(--rival);
+  --color-axis: var(--axis);
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Malgun Gothic", sans-serif;
+}
+
+/* 글씨를 전체적으로 키운다(기본 16px → 18px). rem 단위가 함께 커진다.
+   사용자가 고른 크기는 components/text-size.tsx가 이 값을 덮어쓴다. */
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  word-break: keep-all;      /* 한글이 단어 중간에서 끊기지 않게 */
+  overflow-wrap: break-word; /* 그래도 칸보다 긴 낱말(긴 공고명)은 넘치지 않게 끊는다 */
+  letter-spacing: -0.011em;
+}
+
+/* 세로로 줄 맞추는 숫자(표·축·시계) */
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "ss06";
+}
+
+.display {
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+/* 남색 띠 아래쪽의 눈금자 무늬 */
+.ruler-edge {
+  background-image:
+    linear-gradient(to right, var(--navy-line) 1px, transparent 1px),
+    linear-gradient(to right, var(--navy-line) 1px, transparent 1px);
+  background-size: 12px 8px, 60px 16px;
+  background-position: left bottom, left bottom;
+  background-repeat: repeat-x;
+}
+
+/* ── 모션 ─────────────────────────────────────────── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes grow-y {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes drop {
+  0% { opacity: 0; transform: translateY(-14px) scale(0.6); }
+  70% { opacity: 1; transform: translateY(2px) scale(1.08); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes ping {
+  0% { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(3.2); opacity: 0; }
+}
+
+.rise { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.grow-x { transform-origin: left center; animation: grow-x 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.grow-y { transform-origin: center bottom; transform-box: fill-box; animation: grow-y 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.draw { stroke-dasharray: 1; animation: draw 1.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.fade { animation: fade 0.8s ease both; }
+.drop { transform-box: fill-box; transform-origin: center; animation: drop 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.ping { transform-box: fill-box; transform-origin: center; animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+/* 화면에 들어올 때 떠오르는 구역(components/reveal.tsx가 data-shown을 붙인다) */
+.reveal { min-width: 0; opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal[data-shown="true"] { opacity: 1; transform: none; }
+
+.lift { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.lift:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -18px rgb(11 22 56 / 0.35); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rise, .grow-x, .grow-y, .draw, .fade, .drop, .ping { animation: none; }
+  .draw { stroke-dasharray: none; }
+  .ping { display: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .lift, .lift:hover { transition: none; transform: none; }
+}
+
+/* 구역이 화면에 들어온 뒤에 자라는 막대(.reveal 안에서만) */
+.reveal .bar-x { transform: scaleX(0); transform-origin: left center; transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal[data-shown="true"] .bar-x { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal .bar-x { transform: none; transition: none; }
+}
